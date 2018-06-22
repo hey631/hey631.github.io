@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Head tag -->
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Title -->
+  
+  <title>关于swift的几个问题 - Cuddleidiots</title>
+
+  <!--Favicon-->
+  <link rel="icon" href="favicon/favicon.ico">
+
+  <!--Description-->
+  
+      <meta name="description" content="突然发现自己给自己解答问题，也是一个肥肠有意思的过程。以下我还新增了“猜想”一栏，来尝试回答一些暂时没有足够资料支撑的困惑。
+Swift 版本是：4.0.3。不同版本的 Swift，可能无法复现问题。
+个人记录，仅供参考，不保证严格意义上的正确性。
+swift 中,如何在函数内,声明 static ">
+  
+
+  <!--Author-->
+  
+      <meta name="author" content="631">
+  
+
+  <!-- Pure CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Crimson+Text|Open+Sans:300,800" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- Google Analytics -->
+  
+
+</head>
+ <!-- highlight.js代码高亮主题 css 引入-->
+  <link rel="stylesheet" href="/plugins/highlight/styles/Darcula.css">
+  <!-- highlight.js代码高亮主题 css 引入-->
+
+  <body>
+  	<div class="container-fluid navbar-container m-sm-5">
+      <!-- Header -->
+      <nav class="navbar navbar-toggleable-sm navbar-light px-1 py-3 my-3 mb-sm-5">
+  <a class="navbar-brand ml-2" href="/">Cuddleidiots</a>
+  <button class="navbar-toggler navbar-toggler-right py-2" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse text-center" id="navbarCollapse">
+    <ul class="navbar-nav ml-auto my-auto">
+      
+        <li class="nav-item">
+          <a class="nav-link" href="/about">About</a>
+        </li>
+      
+        <li class="nav-item">
+          <a class="nav-link" href="/contact">Contact</a>
+        </li>
+      
+        <li class="nav-item">
+          <a class="nav-link" href="https://instagram.com/hey631">Instagram</a>
+        </li>
+      
+        <li class="nav-item">
+          <a class="nav-link" href="https://weibo.com/mosican/">Weibo</a>
+        </li>
+      
+    </ul>
+    <hr class="hidden-md-up" />
+  </div>
+</nav>
+
+
+  		<div class="row">
+  			<div class="col-12 mb-4">
+  <img class="img-fluid project-img" src="/images/clo.jpg" alt="关于swift的几个问题">
+</div>
+<div class="col-lg-4 col-12 pt-3 px-4 pr-lg-5">
+  <h1>关于swift的几个问题</h1>
+</div>
+<div class="col-lg-8 col-12 pt-lg-3 mb-4 pl-lg-5 px-lg-0 px-4 portfolio-content">
+  <p>突然发现自己给自己解答问题，也是一个肥肠有意思的过程。以下我还新增了“猜想”一栏，来尝试回答一些暂时没有足够资料支撑的困惑。</p>
+<p>Swift 版本是：4.0.3。不同版本的 Swift，可能无法复现问题。</p>
+<p>个人记录，仅供参考，不保证严格意义上的正确性。</p>
+<h2 id="swift-中-如何在函数内-声明-static-变量"><a href="#swift-中-如何在函数内-声明-static-变量" class="headerlink" title="swift 中,如何在函数内,声明 static 变量 ?"></a>swift 中,如何在函数内,声明 static 变量 ?</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述:"></a>问题描述:</h3><p>以下语句,是编译不过的，提示：“static properties may only be declared on a type”</p>
+<pre><code>func add() -&gt; Int {
+    static var base = 0
+    base += 1
+    return base
+}
+add()
+add()
+add()
+</code></pre><h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案:"></a>解决方案:</h3><p>可以用内嵌类型的 static 属性来解决,如:</p>
+<pre><code>func add() -&gt; Int {
+    struct Temp{
+        static var base = 0
+    }
+
+    Temp.base += 1
+    return Temp.base
+}
+
+add() // --&gt; 1
+add() // --&gt; 2
+add() // --&gt; 3
+</code></pre><p>参考:<a href="https://link.jianshu.com?t=https%3A%2F%2Fstackoverflow.com%2Fa%2F25354915" target="_blank" rel="noopener">https://stackoverflow.com/a/25354915</a></p>
+<h3 id="猜想"><a href="#猜想" class="headerlink" title="猜想:"></a>猜想:</h3><p>同一作用域的同名内嵌类型,多次执行,只会真正定义一次.</p>
+<h2 id="swift-有没有可以进行全局埋点的黑魔法机制"><a href="#swift-有没有可以进行全局埋点的黑魔法机制" class="headerlink" title="swift 有没有可以进行全局埋点的黑魔法机制?"></a>swift 有没有可以进行全局埋点的黑魔法机制?</h2><h3 id="问题描述-1"><a href="#问题描述-1" class="headerlink" title="问题描述:"></a>问题描述:</h3><p>全局埋点,依赖于 runtime 机制, 所以换种问法就是: swift 中如何继续使用 objc 的runtime 机制.</p>
+<h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案:"></a>解决方案:</h3><blockquote>
+<p>纯Swift类没有动态性，但在方法、属性前添加dynamic修饰可以获得动态性。</p>
+<p>继承自NSObject的Swift类，其继承自父类的方法具有动态性，其他自定义方法、属性需要加dynamic修饰才可以获得动态性。</p>
+<p>若方法的参数、属性类型为Swift特有、无法映射到Objective-C的类型(如Character、Tuple)，则此方法、属性无法添加dynamic修饰（会编译错误）</p>
+</blockquote>
+<p>参考: <a href="https://link.jianshu.com?t=http%3A%2F%2Fwww.infoq.com%2Fcn%2Farticles%2Fdynamic-analysis-of-runtime-swift" target="_blank" rel="noopener">http://www.infoq.com/cn/articles/dynamic-analysis-of-runtime-swift</a></p>
+<p>快速验证,可使用:</p>
+<pre><code>class A{
+    @objc dynamic  func funcA(){
+        print(&quot;funcA&quot;)
+    }
+}
+
+func methodSwizze(cls: AnyClass, originalSelector: Selector, swizzledSelector:Selector){
+    let originalMethod = class_getInstanceMethod(cls, originalSelector)
+    let swizzledMethod = class_getInstanceMethod(cls, swizzledSelector)
+
+    if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
+
+extension A{
+    @objc dynamic  func funcB(){
+        print(&quot;funcB&quot;)
+    }
+}
+
+methodSwizze(cls: A.self, originalSelector: #selector(A.funcA), swizzledSelector: #selector(A.funcB))
+
+let a = A()
+
+a.funcB() // --&gt; funcA
+a.funcA() // --&gt; funcB
+</code></pre><p>注意: swift 4 中, 加 dynamic 的同时,也必须加 @objc – 即不允许单独加 dynamic 标记.</p>
+<h3 id="猜想-1"><a href="#猜想-1" class="headerlink" title="猜想:"></a>猜想:</h3><p>dynamic 是在用性能换灵活性.生产环境下,未来更可能的方案,可能是:</p>
+<p>通过协议,约定必须实现的统计相关的方法 –&gt; 通过单元测试,来保证遵循特定统计协议的类型,在特定的时机一定会调用协议规定的统计方法.</p>
+<h2 id="extension-中覆盖某个自定义的-framework-中的-open-public-class-中的-private-方法-会发生什么事"><a href="#extension-中覆盖某个自定义的-framework-中的-open-public-class-中的-private-方法-会发生什么事" class="headerlink" title="extension 中覆盖某个自定义的 framework 中的 open/public class 中的 private 方法,会发生什么事?"></a>extension 中覆盖某个自定义的 framework 中的 open/public class 中的 private 方法,会发生什么事?</h2><h3 id="问题描述-2"><a href="#问题描述-2" class="headerlink" title="问题描述:"></a>问题描述:</h3><p>模块A:</p>
+<pre><code> open class Book: NSObject {
+    private func funcA(){
+        print(&quot;private funcA&quot;)
+    }
+
+    public func callFuncA(){
+        funcA()
+    }
+}
+</code></pre><p>模块B:</p>
+<pre><code>public extension Book {
+    func funcA(){
+        print(&quot;public funcA&quot;)
+    }
+}
+</code></pre><p>问题:</p>
+<p>模块B 中,以下代码的输出是?</p>
+<pre><code>let book = Book()
+book.funcA()  // --&gt; ?
+book.callFuncA() // --&gt; ?
+</code></pre><h3 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案:"></a>解决方案:</h3><p>可以直接运行观察:</p>
+<pre><code>let book = Book()
+book.funcA()  // --&gt; public funcA
+book.callFuncA() // --&gt; private funcA
+</code></pre><p>所以: 通过 extension 覆盖其他模块open类的private方法,不会有任何诡异的问题.两个实现,都对彼此透明.</p>
+<p>更进一步: 模块B以 Optional 方式引入模块A. 如果是在模块B中,通过 extension 覆盖模块A的private 方法.然后在模块 C 中同时引入了模块 A 和 B,此时模块C中类似的函数调用,会是哪个模块的方法实现生效?</p>
+<pre><code>let book = Book()
+book.funcA()  // --&gt; public funcA
+book.callFuncA() // --&gt; private funcA
+</code></pre><p>可以看到,仍然是模块B中的 public 级别的方法生效.</p>
+<p>再进一步,如果模块 A 中的方法,由 private 改为 public,即:</p>
+<pre><code>open class Book: NSObject {
+    public func funcA(){
+        print(&quot;original public funcA&quot;)
+    }
+
+    public func callFuncA(){
+        funcA()
+    }
+}
+</code></pre><p>此时模块C 中的调用,会报错:</p>
+<blockquote>
+<p>error: ambiguous use of ‘funcA()’<br>book.funcA()<br>^<br>A.Book:2:17: note: found this candidate<br>public func funcA()<br>^<br>B.Book:2:17: note: found this candidate<br>public func funcA()</p>
+</blockquote>
+<p>如果模块 B 以 Required 方式引入模块A,模块C,只引入模块B,此时的调用结果,会不会有什么不同? –&gt; 然而,并没有什么不同,依然是同样的 ambiguous 错误.</p>
+<p><strong>总结一下</strong>:</p>
+<ul>
+<li><p>可以安全地在 extension 中覆盖其他模块中open/public类中定义的非 public 方法.对于原有模块,会继续使用自身的非 public 的方法定义;定义其他模块,可以正确使用 extension 版本中的模块代码.</p>
+</li>
+<li><p>不要尝试在 extension 中定义其他模块中 open/public类中定义的 public 方法.虽然可以定义,但是使用时,会引起 ambiguous 错误.</p>
+</li>
+<li><p>在使用 extension 扩展其他模块中定义的类时,最好还是给自己扩展的方法加上特定前缀,不然第三方模块万一暴露的同名方法,自己的代码就彻底跪了.</p>
+</li>
+</ul>
+<h3 id="猜想-2"><a href="#猜想-2" class="headerlink" title="猜想:"></a>猜想:</h3><p>扩展第三方模块类时,使用自定义的前缀,总是一个好的习惯.</p>
+<h2 id="嵌套定义的类型-如果外层类型是-private-内层类型是-open-内层类型-那么内层类型有可能在其他模块中被使用吗"><a href="#嵌套定义的类型-如果外层类型是-private-内层类型是-open-内层类型-那么内层类型有可能在其他模块中被使用吗" class="headerlink" title="嵌套定义的类型,如果外层类型是 private, 内层类型是 open,内层类型.那么内层类型有可能在其他模块中被使用吗 ?"></a>嵌套定义的类型,如果外层类型是 private, 内层类型是 open,内层类型.那么内层类型有可能在其他模块中被使用吗 ?</h2><h3 id="问题描述-3"><a href="#问题描述-3" class="headerlink" title="问题描述:"></a>问题描述:</h3><pre><code> open class Book: NSObject {
+    private class InnerBook{
+        open class DeeperBook{
+
+        }
+    }
+}
+</code></pre><p>在另一个 swift 模块中,能使用类似下面的类型初始化代码吗?</p>
+<pre><code>var book = Book.InnerBook.DeeperBook()
+</code></pre><h3 id="解决方案-3"><a href="#解决方案-3" class="headerlink" title="解决方案:"></a>解决方案:</h3><p>直接调用,会报错:</p>
+<blockquote>
+<p>error: ‘InnerBook’ is inaccessible due to ‘private’ protection level</p>
+</blockquote>
+<p>尝试修改为:</p>
+<pre><code> open class Book: NSObject {
+    open class InnerBook{
+        open class DeeperBook{
+
+        }
+    }
+}
+</code></pre><p>依然报错:</p>
+<blockquote>
+<p>error: ‘Book.InnerBook.DeeperBook’ initializer is inaccessible due to ‘internal’ protection level</p>
+</blockquote>
+<p>根据提示,再修改下 DeeperBook 的初始化方法的访问级别:</p>
+<pre><code>open class Book: NSObject {
+    open class InnerBook{
+        open class DeeperBook{
+            public init() {
+
+            }
+        }
+    }
+}
+</code></pre><h3 id="猜想-3"><a href="#猜想-3" class="headerlink" title="猜想:"></a>猜想:</h3><p>内嵌类型的方法的访问级别,并不会随着类型本身访问级别的宽松更变得比默认的 internal 更宽松.</p>
+<h2 id="疑问-为什么函数定义外的-closure-不会引起作用域内其他变量引用计数的变化"><a href="#疑问-为什么函数定义外的-closure-不会引起作用域内其他变量引用计数的变化" class="headerlink" title="疑问: 为什么函数定义外的 closure 不会引起作用域内其他变量引用计数的变化?"></a>疑问: 为什么函数定义外的 closure 不会引起作用域内其他变量引用计数的变化?</h2><h3 id="问题描述-4"><a href="#问题描述-4" class="headerlink" title="问题描述:"></a>问题描述:</h3><p>仔细观察以下不同代码片段的不同输出:</p>
+<p>片段A:</p>
+<pre><code>class Book{
+    let name: String
+
+    lazy var whoami:(()-&gt;String)? = {
+        return self.name
+    }
+
+    init(name:String) {
+        self.name = name
+    }
+
+    deinit {
+        print(&quot;\(name) is being deinitialized&quot;)
+    }
+}
+
+var aBook:Book? = Book(name: &quot;风之影&quot;)
+print(aBook!.whoami!())
+
+aBook = nil
+
+/*
+输出:
+
+风之影
+*/
+</code></pre><p>片段B:</p>
+<pre><code>class Book{
+    let name: String
+
+    lazy var whoami:(()-&gt;String)? = {
+        return self.name
+    }
+
+    init(name:String) {
+        self.name = name
+    }
+
+    deinit {
+        print(&quot;\(name) is being deinitialized&quot;)
+    }
+}
+
+var aBook:Book? = Book(name: &quot;风之影&quot;)
+print(aBook!.whoami!())
+
+aBook?.whoami = nil
+aBook = nil
+
+/*
+输出:
+
+风之影
+风之影 is being deinitialized
+*/
+</code></pre><p>片段C:</p>
+<pre><code>class Book{
+    let name: String
+
+    lazy var whoami:(()-&gt;String)? = {
+        return self.name
+    }
+
+    init(name:String) {
+        self.name = name
+    }
+
+    deinit {
+        print(&quot;\(name) is being deinitialized&quot;)
+    }
+}
+
+var aBook:Book? = Book(name: &quot;风之影&quot;)
+
+aBook?.whoami = {
+    return aBook!.name + &quot; new&quot;
+}
+
+print(aBook!.whoami!())
+
+aBook = nil
+
+/*
+输出:
+
+风之影 new
+风之影 is being deinitialized
+*/
+</code></pre><p>片段A, aBook 内存泄露,经典的 closure self 循环引用问题.</p>
+<p>片段B,是 closure self 循环引用的一个可选解决方案,即 self 主动切断对 closure 的引用.</p>
+<p>片段C,比较诡异. aBook 引用了一个新的 closure,新的 closure 内又引用了 aBook 一次,但是 aBook 竟然还是可以正确释放,并没有预期中的内存泄露问题.令人费解!?</p>
+<h3 id="解决方案-4"><a href="#解决方案-4" class="headerlink" title="解决方案:"></a>解决方案:</h3><p>片段 D:</p>
+<pre><code>class Book{
+    let name: String
+
+    lazy var whoami:(()-&gt;String)? = {
+        return self.name
+    }
+
+    init(name:String) {
+        self.name = name
+    }
+
+    deinit {
+        print(&quot;\(name) is being deinitialized&quot;)
+    }
+}
+
+var aBook:Book? = Book(name: &quot;风之影&quot;)
+
+aBook?.whoami = {
+    [aBook] in
+    return aBook!.name + &quot; new&quot;
+}
+
+print(aBook!.whoami!())
+
+aBook = nil
+
+/*
+输出:
+
+风之影 new
+*/
+</code></pre><p>可以看到,这样 aBook 就会泄露了.片段 D 与 片段 C 的区别在于 closure 中的那句 <strong>[aBook] in</strong> .这个语法,是我”杜撰”的,语义上近似于以强引用方式捕捉 aBook 对应的真实对象.<a href="https://link.jianshu.com?t=https%3A%2F%2Fdeveloper.apple.com%2Flibrary%2Fcontent%2Fdocumentation%2FSwift%2FConceptual%2FSwift_Programming_Language%2FAutomaticReferenceCounting.html%23%2F%2Fapple_ref%2Fdoc%2Fuid%2FTP40014097-CH20-ID48" target="_blank" rel="noopener">官方文档</a>中并没有提到有这种语法.</p>
+<p>另外,参考 objc 中block 的行为,我尝试搜索相关 swift 中 栈(stack) block 的相关信息.如果 closure 也区分栈和堆,倒是还可以勉强解释.不过,并没有相关的信息,而且 closure 本身也是不支持 copy 操作的.</p>
+<p><strong>注意</strong>: 当前复现此问题用的是 swift <strong>4.0.3</strong> 版本,不同版本中的 closure 的行为可能不一致.</p>
+<h3 id="猜想-4"><a href="#猜想-4" class="headerlink" title="猜想:"></a>猜想:</h3><p>或许 swift 中,只有内部有可能直接使用 self 的 closure,才需要特别考虑closure引起的内存泄露问题.</p>
+<p>个人猜测,可能是因为 self 比较特殊, closure 只能直接捕捉其真实对象</p>
+
+</div>
+
+
+      </div>
+      
+  	</div>
+
+    <!-- After footer scripts -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <!-- highlight.js代码高亮主题 script 引入-->
+  <script src="/plugins/highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- highlight.js代码高亮主题 script 引入-->
+  </body>
+</html>
